@@ -136,6 +136,76 @@ class SettingsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Giọng đọc (TTS)',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Áp dụng cho nút 🔊 trong app và trên notification.',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          ChoiceChip(
+                            label: const Text('Mặc định'),
+                            selected: settings.ttsVoiceGender == null,
+                            onSelected: (_) {
+                              provider.updateSettings(
+                                settings.copyWith(clearTtsVoiceGender: true),
+                              );
+                            },
+                          ),
+                          ChoiceChip(
+                            label: const Text('Nữ'),
+                            selected: settings.ttsVoiceGender ==
+                                AppSettings.ttsGenderFemale,
+                            onSelected: (_) {
+                              provider.updateSettings(
+                                settings.copyWith(
+                                  ttsVoiceGender: AppSettings.ttsGenderFemale,
+                                ),
+                              );
+                            },
+                          ),
+                          ChoiceChip(
+                            label: const Text('Nam'),
+                            selected: settings.ttsVoiceGender ==
+                                AppSettings.ttsGenderMale,
+                            onSelected: (_) {
+                              provider.updateSettings(
+                                settings.copyWith(
+                                  ttsVoiceGender: AppSettings.ttsGenderMale,
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        onPressed: () => provider.speakSentence(
+                          'Practice makes perfect.',
+                        ),
+                        icon: const Icon(Icons.volume_up_outlined),
+                        label: const Text('Nghe thử giọng'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Card(
                 child: ListTile(
                   leading: const Icon(Icons.info_outline_rounded),
                   title: const Text('Lock screen & TTS'),

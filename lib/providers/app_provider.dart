@@ -46,6 +46,7 @@ class AppProvider extends ChangeNotifier {
     await ReminderService.instance.initialize();
 
     _settings = await NotificationService.loadSettings();
+    await TtsService.instance.applyVoiceGender(_settings.ttsVoiceGender);
     await _refreshData();
     await ReminderService.instance.syncSchedule(_settings);
 
@@ -245,6 +246,7 @@ class AppProvider extends ChangeNotifier {
   Future<void> updateSettings(AppSettings settings) async {
     _settings = settings;
     await NotificationService.saveSettings(settings);
+    await TtsService.instance.applyVoiceGender(settings.ttsVoiceGender);
     await ReminderService.instance.syncSchedule(settings);
     notifyListeners();
   }

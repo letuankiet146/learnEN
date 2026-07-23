@@ -24,6 +24,18 @@ class MainActivity : FlutterActivity() {
                     LearnEnNotificationHelper.show(this, id, text)
                     result.success(null)
                 }
+                "setTtsGender" -> {
+                    val gender = call.argument<String>("gender")
+                    TtsHelper.setGender(this, gender)
+                    result.success(null)
+                }
+                "resolveVoiceForGender" -> {
+                    val gender = call.argument<String>("gender")
+                    TtsHelper.ensureEngineForFlutter(this) {
+                        val resolved = TtsHelper.resolveVoiceForGenderSync(gender)
+                        result.success(resolved)
+                    }
+                }
                 else -> result.notImplemented()
             }
         }

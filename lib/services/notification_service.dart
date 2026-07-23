@@ -172,6 +172,7 @@ class NotificationService {
       reminderIntervalMinutes: prefs.getInt('reminder_interval_minutes') ?? 30,
       useAllCollections: prefs.getBool('use_all_collections') ?? true,
       selectedCollectionIds: selectedIds,
+      ttsVoiceGender: prefs.getString('tts_voice_gender'),
     );
   }
 
@@ -187,6 +188,13 @@ class NotificationService {
       'selected_collection_ids',
       settings.selectedCollectionIds,
     );
+    if (settings.ttsVoiceGender == null) {
+      await prefs.remove('tts_voice_gender');
+    } else {
+      await prefs.setString('tts_voice_gender', settings.ttsVoiceGender!);
+    }
+    await prefs.remove('tts_voice_name');
+    await prefs.remove('tts_voice_locale');
   }
 }
 
