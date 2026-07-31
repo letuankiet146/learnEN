@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 
 import '../database/database_helper.dart';
 import '../models/app_settings.dart';
+import '../models/collection_kids_type.dart';
 import '../models/sentence.dart';
 import '../models/word_collection.dart';
 import '../services/notification_service.dart';
@@ -211,6 +212,7 @@ class AppProvider extends ChangeNotifier {
   Future<WordCollection> createCollection({
     required String name,
     String? description,
+    CollectionKidsType kidsType = CollectionKidsType.vocabulary,
   }) async {
     final trimmed = name.trim();
     if (trimmed.isEmpty) {
@@ -222,12 +224,19 @@ class AppProvider extends ChangeNotifier {
       name: trimmed,
       description: description?.trim(),
       createdAt: DateTime.now(),
+      kidsType: kidsType,
     );
 
     await _db.insertCollection(collection);
     await _refreshData();
     notifyListeners();
     return collection;
+  }
+
+  Future<void> updateCollection(WordCollection collection) async {
+    await _db.updateCollection(collection);
+    await _refreshData();
+    notifyListeners();
   }
 
   Future<void> deleteCollection(String id) async {

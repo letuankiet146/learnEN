@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../database/database_helper.dart';
 import '../models/app_settings.dart';
+import '../models/word_game_logic.dart';
 import 'tts_service.dart';
 
 const reminderTaskName = 'learnEnReminderTask';
@@ -173,6 +174,9 @@ class NotificationService {
       useAllCollections: prefs.getBool('use_all_collections') ?? true,
       selectedCollectionIds: selectedIds,
       ttsVoiceGender: prefs.getString('tts_voice_gender'),
+      wordGameWordsPerRound:
+          prefs.getInt('word_game_words_per_round') ??
+          WordGameLogic.defaultWordsPerRound,
     );
   }
 
@@ -193,6 +197,10 @@ class NotificationService {
     } else {
       await prefs.setString('tts_voice_gender', settings.ttsVoiceGender!);
     }
+    await prefs.setInt(
+      'word_game_words_per_round',
+      settings.wordGameWordsPerRound,
+    );
     await prefs.remove('tts_voice_name');
     await prefs.remove('tts_voice_locale');
   }

@@ -24,6 +24,7 @@ dependencies:
   timezone: ^0.10.1
   workmanager: ^0.6.0
   intl: ^0.20.2
+  audioplayers: ^6.4.0
 
 dev_dependencies:
   flutter_test:
@@ -32,3 +33,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/shin/
+    - assets/images/shin/true/
+    - assets/images/shin/false/
+    - assets/sounds/true/
+    - assets/sounds/false/
+    - assets/sounds/level-complete.mp3
+    - assets/sounds/game-show-win.mp3

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../models/app_settings.dart';
 import '../providers/app_provider.dart';
+import 'kids_mode_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -26,6 +27,29 @@ class SettingsScreen extends StatelessWidget {
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              Card(
+                color: const Color(0xFFFFF7ED),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.child_care_rounded,
+                    color: Color(0xFFEA580C),
+                  ),
+                  title: const Text('Chế độ trẻ em'),
+                  subtitle: const Text(
+                    'Tất cả câu — chữ lớn, chạm để nghe.',
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const KidsModeScreen(),
+                        fullscreenDialog: true,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 12),
               Card(
                 child: SwitchListTile(
                   title: const Text('Bật nhắc nhớ'),

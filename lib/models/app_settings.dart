@@ -1,3 +1,5 @@
+import 'word_game_logic.dart';
+
 class AppSettings {
   const AppSettings({
     this.remindersEnabled = true,
@@ -5,6 +7,7 @@ class AppSettings {
     this.useAllCollections = true,
     this.selectedCollectionIds = const [],
     this.ttsVoiceGender,
+    this.wordGameWordsPerRound = WordGameLogic.defaultWordsPerRound,
   });
 
   final bool remindersEnabled;
@@ -14,6 +17,7 @@ class AppSettings {
 
   /// `female`, `male`, or null for system default.
   final String? ttsVoiceGender;
+  final int wordGameWordsPerRound;
 
   static const intervalOptions = [15, 30, 60, 120, 240];
   static const ttsGenderFemale = 'female';
@@ -26,6 +30,7 @@ class AppSettings {
     List<String>? selectedCollectionIds,
     String? ttsVoiceGender,
     bool clearTtsVoiceGender = false,
+    int? wordGameWordsPerRound,
   }) {
     return AppSettings(
       remindersEnabled: remindersEnabled ?? this.remindersEnabled,
@@ -37,6 +42,8 @@ class AppSettings {
       ttsVoiceGender: clearTtsVoiceGender
           ? null
           : (ttsVoiceGender ?? this.ttsVoiceGender),
+      wordGameWordsPerRound:
+          wordGameWordsPerRound ?? this.wordGameWordsPerRound,
     );
   }
 }

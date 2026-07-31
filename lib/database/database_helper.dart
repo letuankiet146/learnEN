@@ -9,7 +9,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static const _dbName = 'learn_en.db';
-  static const _dbVersion = 1;
+  static const _dbVersion = 2;
 
   Database? _database;
 
@@ -32,7 +32,8 @@ class DatabaseHelper {
             name TEXT NOT NULL,
             description TEXT,
             created_at INTEGER NOT NULL,
-            is_active INTEGER NOT NULL DEFAULT 1
+            is_active INTEGER NOT NULL DEFAULT 1,
+            kids_type TEXT NOT NULL DEFAULT 'vocabulary'
           )
         ''');
 
@@ -46,6 +47,14 @@ class DatabaseHelper {
             FOREIGN KEY (collection_id) REFERENCES collections (id) ON DELETE SET NULL
           )
         ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('''
+            ALTER TABLE collections
+            ADD COLUMN kids_type TEXT NOT NULL DEFAULT 'vocabulary'
+          ''');
+        }
       },
     );
   }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/collection_kids_type.dart';
 import '../providers/app_provider.dart';
 import '../widgets/empty_state.dart';
 import 'collection_detail_screen.dart';
+import 'kids_collections_screen.dart';
+import 'word_game_collections_screen.dart';
 
 class CollectionsScreen extends StatelessWidget {
   const CollectionsScreen({super.key});
@@ -11,35 +14,64 @@ class CollectionsScreen extends StatelessWidget {
   Future<void> _createCollection(BuildContext context) async {
     final nameController = TextEditingController();
     final descriptionController = TextEditingController();
+    var kidsType = CollectionKidsType.vocabulary;
 
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Tạo collection mới'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Tên collection'),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Tạo collection mới'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Tên collection'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: descriptionController,
+                decoration:
+                    const InputDecoration(labelText: 'Mô tả (tuỳ chọn)'),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Chế độ trẻ em',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 8),
+              SegmentedButton<CollectionKidsType>(
+                segments: const [
+                  ButtonSegment(
+                    value: CollectionKidsType.vocabulary,
+                    label: Text('Từ vựng'),
+                    icon: Icon(Icons.abc_rounded),
+                  ),
+                  ButtonSegment(
+                    value: CollectionKidsType.dialogue,
+                    label: Text('Câu thoại'),
+                    icon: Icon(Icons.chat_bubble_outline_rounded),
+                  ),
+                ],
+                selected: {kidsType},
+                onSelectionChanged: (selected) {
+                  setState(() => kidsType = selected.first);
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Hủy'),
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'Mô tả (tuỳ chọn)'),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Tạo'),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Hủy'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Tạo'),
-          ),
-        ],
       ),
     );
 
@@ -49,6 +81,7 @@ class CollectionsScreen extends StatelessWidget {
       await context.read<AppProvider>().createCollection(
             name: nameController.text,
             description: descriptionController.text,
+            kidsType: kidsType,
           );
     } catch (error) {
       if (context.mounted) {
@@ -86,9 +119,71 @@ class CollectionsScreen extends StatelessWidget {
                 )
               : ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
-                  itemCount: collections.length,
+                  itemCount: collections.length + 2,
                   itemBuilder: (context, index) {
-                    final collection = collections[index];
+                    if (index == 0) {
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        color: const Color(0xFFFFF7ED),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16),
+                          leading: const Icon(
+                            Icons.sports_esports_rounded,
+                            color: Color(0xFFEA580C),
+                            size: 32,
+                          ),
+                          title: const Text(
+                            'Game nhớ từ',
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          subtitle: const Text(
+                            'Bé chọn chủ đề và chơi game nhận diện từ vựng.',
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const WordGameCollectionsScreen(),
+                                fullscreenDialog: true,
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }
+
+                    if (index == 1) {
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        color: const Color(0xFFFFF7ED),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16),
+                          leading: const Icon(
+                            Icons.child_care_rounded,
+                            color: Color(0xFFEA580C),
+                            size: 32,
+                          ),
+                          title: const Text(
+                            'Chế độ trẻ em theo chủ đề',
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          subtitle: const Text(
+                            'Bé chọn chủ đề rồi học các câu trong chủ đề đó.',
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const KidsCollectionsScreen(),
+                                fullscreenDialog: true,
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }
+
+                    final collection = collections[index - 2];
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
                       child: ListTile(
@@ -111,7 +206,9 @@ class CollectionsScreen extends StatelessWidget {
                               future: provider.sentenceCount(collection.id),
                               builder: (context, snapshot) {
                                 final count = snapshot.data ?? 0;
-                                return Text('$count câu');
+                                return Text(
+                                  '${collection.kidsType.label} · $count câu',
+                                );
                               },
                             ),
                           ],

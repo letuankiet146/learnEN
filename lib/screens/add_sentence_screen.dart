@@ -12,11 +12,13 @@ class AddSentenceScreen extends StatefulWidget {
 
 class _AddSentenceScreenState extends State<AddSentenceScreen> {
   final _controller = TextEditingController();
+  final _sentenceFocusNode = FocusNode();
   String? _selectedCollectionId;
 
   @override
   void dispose() {
     _controller.dispose();
+    _sentenceFocusNode.dispose();
     super.dispose();
   }
 
@@ -37,7 +39,15 @@ class _AddSentenceScreenState extends State<AddSentenceScreen> {
       return;
     }
 
-    Navigator.pop(context);
+    _controller.clear();
+    _sentenceFocusNode.requestFocus();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Đã lưu câu. Tiếp tục nhập câu mới.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -45,7 +55,15 @@ class _AddSentenceScreenState extends State<AddSentenceScreen> {
     return Consumer<AppProvider>(
       builder: (context, provider, _) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Thêm câu mới')),
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: const Text('Thêm câu mới'),
+            leading: IconButton(
+              icon: const Icon(Icons.close_rounded),
+              tooltip: 'Đóng',
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
@@ -56,6 +74,7 @@ class _AddSentenceScreenState extends State<AddSentenceScreen> {
               const SizedBox(height: 16),
               TextField(
                 controller: _controller,
+                focusNode: _sentenceFocusNode,
                 minLines: 3,
                 maxLines: 6,
                 textInputAction: TextInputAction.newline,
@@ -66,7 +85,7 @@ class _AddSentenceScreenState extends State<AddSentenceScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String?>(
-                initialValue: _selectedCollectionId,
+                value: _selectedCollectionId,
                 decoration: const InputDecoration(
                   labelText: 'Collection (tuỳ chọn)',
                 ),

@@ -1,3 +1,5 @@
+import 'collection_kids_type.dart';
+
 class WordCollection {
   const WordCollection({
     required this.id,
@@ -5,6 +7,7 @@ class WordCollection {
     this.description,
     required this.createdAt,
     this.isActive = true,
+    this.kidsType = CollectionKidsType.vocabulary,
   });
 
   final String id;
@@ -12,6 +15,7 @@ class WordCollection {
   final String? description;
   final DateTime createdAt;
   final bool isActive;
+  final CollectionKidsType kidsType;
 
   WordCollection copyWith({
     String? id,
@@ -19,6 +23,7 @@ class WordCollection {
     String? description,
     DateTime? createdAt,
     bool? isActive,
+    CollectionKidsType? kidsType,
   }) {
     return WordCollection(
       id: id ?? this.id,
@@ -26,6 +31,7 @@ class WordCollection {
       description: description ?? this.description,
       createdAt: createdAt ?? this.createdAt,
       isActive: isActive ?? this.isActive,
+      kidsType: kidsType ?? this.kidsType,
     );
   }
 
@@ -36,6 +42,7 @@ class WordCollection {
       'description': description,
       'created_at': createdAt.millisecondsSinceEpoch,
       'is_active': isActive ? 1 : 0,
+      'kids_type': kidsType.storageValue,
     };
   }
 
@@ -46,6 +53,7 @@ class WordCollection {
       description: map['description'] as String?,
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
       isActive: (map['is_active'] as int) == 1,
+      kidsType: CollectionKidsType.fromStorage(map['kids_type'] as String?),
     );
   }
 }

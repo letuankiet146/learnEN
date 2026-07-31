@@ -19,9 +19,9 @@ class TtsService {
     if (_initialized) return;
 
     await _tts.setLanguage('en-US');
-    await _tts.setSpeechRate(0.45);
+    await _tts.setSpeechRate(0.42);
     await _tts.setVolume(1.0);
-    await _tts.setPitch(1.0);
+    await _tts.setPitch(1.05);
     _initialized = true;
   }
 
@@ -110,6 +110,14 @@ class TtsService {
   }
 
   Future<void> speak(String text) async {
+    await _speakInternal(text, pitch: 1.05);
+  }
+
+  Future<void> speakForGame(String text) async {
+    await _speakInternal(text, pitch: 1.12);
+  }
+
+  Future<void> _speakInternal(String text, {required double pitch}) async {
     await initialize();
 
     if (_voiceName != null && _voiceName!.isNotEmpty) {
@@ -121,6 +129,8 @@ class TtsService {
       await _tts.setLanguage('en-US');
     }
 
+    await _tts.setVolume(1.0);
+    await _tts.setPitch(pitch);
     await _tts.stop();
     await _tts.speak(text);
   }
